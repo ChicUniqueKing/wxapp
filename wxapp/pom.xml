@@ -61,7 +61,7 @@
 		</dependency>
 	</dependencies>
 
-<!-- 	<build>
+<build>
 	<finalName>wxapp</finalName>
 		<plugins>
 			<plugin>
@@ -75,8 +75,8 @@
 				</configuration>
 			</plugin>
 		</plugins>
-	</build> -->
-	     <build>
+	</build>
+	     <!-- <build>
 	     <finalName>wxapp</finalName> 
     <plugins>  
       <plugin>  
@@ -89,6 +89,6 @@
         </configuration>  
        </plugin>  
     </plugins>  
-     </build>  
+     </build>   -->
 
 </project>
