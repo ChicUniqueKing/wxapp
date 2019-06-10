@@ -23,12 +23,14 @@ import org.apache.http.client.utils.HttpClientUtils;
 import org.hibernate.validator.internal.util.privilegedactions.NewInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import top.yistar.wx.wxapp.entity.ReceiveXmlModel;
+import top.yistar.wx.wxapp.msg.handler.MessageHandlerManager;
 import top.yistar.wx.wxapp.util.ReceiveXmlProcess;
 import top.yistar.wx.wxapp.util.SHA1;
 
@@ -40,6 +42,10 @@ import top.yistar.wx.wxapp.util.SHA1;
  */
 @RestController
 public class WxController {
+	
+	
+	@Autowired
+	private MessageHandlerManager messageHandlerManager;
 	
 	
 	private static final String JOK1 = "春分，意思就是春天到了，该分手了。";
@@ -159,7 +165,9 @@ public class WxController {
 			String timestamps = time.substring(0, 10);
 			LOG.info("微信消息类型={}",msgType);
 			if(msgType.equals("text")) {
-				if(msgText.equals("1")){
+				//获得返回结果
+				returnMsg = messageHandlerManager.getHandleResult(receiveMsg);
+				/*if(msgText.equals("1")){
 					 int index = (int)(1+Math.random()*13);
 					String content = joks.get(index);
 					returnMsg ="<xml>\r\n" + 
@@ -179,7 +187,7 @@ public class WxController {
 							"  <Content><![CDATA[欢迎关注订阅号 还在持续开发中 敬请期待]]></Content>\r\n" + 
 							"  <MsgId>"+msgId+"</MsgId>\r\n" + 
 							"</xml>";
-				}
+				}*/
 			}else if(msgType.equals("event")) {
 				returnMsg = "<xml>\r\n" + 
 						"  <ToUserName><![CDATA["+receiveMsg.getFromUserName()+"]]></ToUserName>\r\n" + 
