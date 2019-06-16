@@ -18,7 +18,9 @@ public enum MessageTypeEnum {
 	
 	VOICE("voice","语音消息"),
 	
-	VIDEO("video","视频消息");
+	VIDEO("video","视频消息"),
+	
+	EVENT("event","订阅消息");
 	
 	private String key;
 	private String value;

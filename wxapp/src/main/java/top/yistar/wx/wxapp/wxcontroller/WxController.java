@@ -14,13 +14,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.http.client.utils.HttpClientUtils;
-import org.hibernate.validator.internal.util.privilegedactions.NewInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import top.yistar.wx.wxapp.entity.ReceiveXmlModel;
 import top.yistar.wx.wxapp.msg.handler.MessageHandlerManager;
+import top.yistar.wx.wxapp.util.HttpUtil;
 import top.yistar.wx.wxapp.util.ReceiveXmlProcess;
 import top.yistar.wx.wxapp.util.SHA1;
 
@@ -66,7 +60,6 @@ public class WxController {
 	private static final List<String> joks = new ArrayList<>();
 	
 	static {
-		for(int i=0;i<14;i++) {
 			joks.add(JOK1);
 			joks.add(JOK2);
 			joks.add(JOK3);
@@ -81,7 +74,6 @@ public class WxController {
 			joks.add(JOK12);
 			joks.add(JOK13);
 			joks.add(JOK14);
-		}
 	}
 	
 	
@@ -117,7 +109,11 @@ public class WxController {
 	public Map<String, String> indexTest(String name){
 		Map<String, String> map = new HashMap<>();
 		String phoneUrl = "https://www.baifubao.com/callback?phone=15850781443";
-		HttpClient client = new HttpClient();
+		/*CloseableHttpClient httpClient = HttpClients.createDefault();
+		//HttpClient client = new HttpClient();
+		List<NameValuePair> paris = new ArrayList<>();
+		for()
+		HttpPost httpPost =new HttpPost(phoneUrl);
 		HostConfiguration configuration = new HostConfiguration();
 		configuration.setHost(phoneUrl);
 		HttpClientParams params = new HttpClientParams();
@@ -133,7 +129,8 @@ public class WxController {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		HttpUtil.PostMap(phoneUrl, map);
 		map.put("hello", name);
 		return map;
 	}
@@ -164,49 +161,7 @@ public class WxController {
 			String time = System.currentTimeMillis()+"";
 			String timestamps = time.substring(0, 10);
 			LOG.info("微信消息类型={}",msgType);
-			if(msgType.equals("text")) {
-				//获得返回结果
-				returnMsg = messageHandlerManager.getHandleResult(receiveMsg);
-				/*if(msgText.equals("1")){
-					 int index = (int)(1+Math.random()*13);
-					String content = joks.get(index);
-					returnMsg ="<xml>\r\n" + 
-							"  <ToUserName><![CDATA["+receiveMsg.getFromUserName()+"]]></ToUserName>\r\n" + 
-							"  <FromUserName><![CDATA["+receiveMsg.getToUserName()+"]]></FromUserName>\r\n" + 
-							"  <CreateTime>"+timestamps+"</CreateTime>\r\n" + 
-							"  <MsgType><![CDATA[text]]></MsgType>\r\n" + 
-							"  <Content><![CDATA["+content+"]]></Content>\r\n" + 
-							"  <MsgId>"+msgId+"</MsgId>\r\n" + 
-							"</xml>";
-				}else {
-					returnMsg ="<xml>\r\n" + 
-							"  <ToUserName><![CDATA["+receiveMsg.getFromUserName()+"]]></ToUserName>\r\n" + 
-							"  <FromUserName><![CDATA["+receiveMsg.getToUserName()+"]]></FromUserName>\r\n" + 
-							"  <CreateTime>"+timestamps+"</CreateTime>\r\n" + 
-							"  <MsgType><![CDATA[text]]></MsgType>\r\n" + 
-							"  <Content><![CDATA[欢迎关注订阅号 还在持续开发中 敬请期待]]></Content>\r\n" + 
-							"  <MsgId>"+msgId+"</MsgId>\r\n" + 
-							"</xml>";
-				}*/
-			}else if(msgType.equals("event")) {
-				returnMsg = "<xml>\r\n" + 
-						"  <ToUserName><![CDATA["+receiveMsg.getFromUserName()+"]]></ToUserName>\r\n" + 
-						"  <FromUserName><![CDATA["+receiveMsg.getToUserName()+"]]></FromUserName>\r\n" + 
-						"  <CreateTime>"+timestamps+"</CreateTime>\r\n" + 
-						"  <MsgType><![CDATA[text]]></MsgType>\r\n" + 
-						"  <Content><![CDATA[欢迎关注订阅号 还在持续开发中 敬请期待 ieischic520@163.com \n 1:笑话]]></Content>\r\n" + 
-						"  <MsgId>"+msgId+"</MsgId>\r\n" + 
-						"</xml>";
-			} else{
-				returnMsg = "<xml>\r\n" + 
-						"  <ToUserName><![CDATA["+receiveMsg.getFromUserName()+"]]></ToUserName>\r\n" + 
-						"  <FromUserName><![CDATA["+receiveMsg.getToUserName()+"]]></FromUserName>\r\n" + 
-						"  <CreateTime>"+timestamps+"</CreateTime>\r\n" + 
-						"  <MsgType><![CDATA[text]]></MsgType>\r\n" + 
-						"  <Content><![CDATA[功能还在完善中,您可以发送您的想法 到我的个人邮箱ieischic520@163.com 互相共同学习进步]]></Content>\r\n" + 
-						"  <MsgId>"+msgId+"</MsgId>\r\n" + 
-						"</xml>";
-			}
+			returnMsg = messageHandlerManager.getHandleResult(receiveMsg);
 			LOG.info("return  message ={}",returnMsg);
 			PrintWriter writer = response.getWriter();
 			writer.write(returnMsg);
