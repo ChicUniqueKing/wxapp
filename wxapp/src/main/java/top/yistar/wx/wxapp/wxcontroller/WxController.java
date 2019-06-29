@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import top.yistar.wx.wxapp.entity.ReceiveXmlModel;
 import top.yistar.wx.wxapp.msg.handler.MessageHandlerManager;
-import top.yistar.wx.wxapp.util.HttpUtil;
 import top.yistar.wx.wxapp.util.ReceiveXmlProcess;
 import top.yistar.wx.wxapp.util.SHA1;
 
@@ -108,7 +107,27 @@ public class WxController {
 	@RequestMapping(value="/test")
 	public Map<String, String> indexTest(String name){
 		Map<String, String> map = new HashMap<>();
-		String phoneUrl = "https://www.baifubao.com/callback?phone=15850781443";
+		//String name = request.getParameter("name");
+		System.out.println("===================>>>>>"+name);
+		map.put("name", name);
+		//String phoneUrl = "http://www.yistar.top/test";
+		/*InputStream inputStream = null;
+		try {
+			inputStream  = request.getInputStream();
+			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			BufferedReader reader = new BufferedReader(inputStreamReader);
+			StringBuffer sBuffer = new StringBuffer();
+			String line = "";
+			while((line=reader.readLine())!=null) {
+				sBuffer.append(line);
+			}
+			LOG.info("-------------------------------->>>"+sBuffer.toString());
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		
 		/*CloseableHttpClient httpClient = HttpClients.createDefault();
 		//HttpClient client = new HttpClient();
 		List<NameValuePair> paris = new ArrayList<>();
@@ -130,8 +149,8 @@ public class WxController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		HttpUtil.PostMap(phoneUrl, map);
-		map.put("hello", name);
+		//String str = HttpUtil.invokeRemote(phoneUrl, "GET", map);
+		//System.out.println(str);
 		return map;
 	}
 	
