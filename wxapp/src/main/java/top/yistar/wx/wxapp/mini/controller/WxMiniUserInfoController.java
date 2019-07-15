@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.wxpay.sdk.WXPay;
@@ -24,7 +25,7 @@ public class WxMiniUserInfoController {
 		return null;
 	}
 
-	@PostMapping(value="/minipay")
+	@RequestMapping(value="/minipay")
 	public ResponsePlafe payment(HttpServletRequest req,String productNo) {
 		
 		if(!StringUtils.hasText(productNo)) {
