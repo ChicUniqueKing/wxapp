@@ -26,7 +26,7 @@ public class WxMiniUserInfoController {
 	}
 
 	@RequestMapping(value="/minipay")
-	public ResponsePlafe payment(HttpServletRequest req,String productNo) {
+	public ResponsePlafe payment(HttpServletRequest req,@RequestBody String productNo) {
 		
 		if(!StringUtils.hasText(productNo)) {
 			return new ResponsePlafe(001,"参数出错",null);
