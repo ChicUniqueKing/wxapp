@@ -39,7 +39,7 @@ public static void main(String[] args) {
 	String nonce_str =WXPayUtil.generateNonceStr();//随机字符串
     String mch_id ="11473623";//商户号
 	
-    WxConfig wx = new WxConfig();
+    MyWxConfig wx = new MyWxConfig();
     Map<String, Object> map =new HashMap<>();
 	map.put("nonce_str", nonce_str);
 	map.put("mch_id", mch_id);

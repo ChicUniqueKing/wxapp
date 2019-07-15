@@ -13,7 +13,7 @@ import com.github.wxpay.sdk.WXPay;
 
 import top.yistar.wx.wxapp.entity.ResponsePlafe;
 import top.yistar.wx.wxapp.mini.pay.config.IpAddressGet;
-import top.yistar.wx.wxapp.mini.pay.config.WxConfig;
+import top.yistar.wx.wxapp.mini.pay.config.MyWxConfig;
 
 @RestController
 public class WxMiniUserInfoController {
@@ -43,7 +43,7 @@ public class WxMiniUserInfoController {
 				String ipAddress = IpAddressGet.getIpAddr(req);
 
 				String code_url = "";
-				WxConfig config = new WxConfig();
+				MyWxConfig config = new MyWxConfig();
 				// 生产环境
 				try {
 				WXPay wxpay = new WXPay(config);
