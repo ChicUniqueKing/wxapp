@@ -71,7 +71,7 @@ public class ThreedGroupLoginController {
 		}*/
 		//access_token=FE04************************CCE2&expires_in=7776000&refresh_token=88E4************************BE14 
 		//登录态token
-		String access_token = request.getParameter("access_token");
+		String access_token = request.getParameter("#access_token");
 		
 		String refresh_token = request.getParameter("refresh_token");
 		LOG.info("-----------"+access_token+"===="+refresh_token);
