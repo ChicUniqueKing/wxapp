@@ -33,7 +33,13 @@ public class MyFilter implements Filter{
 		res.setHeader("Access-Control-Max-Age", "0");  
 		res.setHeader("Access-Control-Allow-Headers", "Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With,userId,token");  
 		res.setHeader("Access-Control-Allow-Credentials", "true");  
-		res.setHeader("XDomainRequestAllowed","1"); 
+		res.setHeader("XDomainRequestAllowed","1");
+		String at= "";
+		if(request.getAttribute("access_token")!=null) {
+			at = request.getAttribute("access_token").toString();
+			res.setHeader("Access_Token", at);
+		}
+		res.setHeader("Cookie", at);
 		response.setCharacterEncoding("UTF-8");
 		chain.doFilter(request, response);
 	}

@@ -1,20 +1,19 @@
 package top.yistar.wx.wxapp.wxcontroller;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
-import top.yistar.wx.wxapp.entity.ResponsePlafe;
 import top.yistar.wx.wxapp.util.HttpUtil;
 
 /**
@@ -36,7 +35,7 @@ public class ThreedGroupLoginController {
 	//https://www.yistar.top/callback?code=8D234BE8D947163E1CE0F772249E4BDE
 	
 	@RequestMapping(value="/")
-	public String loginForQQCallBack(HttpServletRequest request) {
+	public void loginForQQCallBack(HttpServletRequest request,HttpServletResponse response) {
 		String code = request.getParameter("code");
 		LOG.info("--=================>>qq登录回调------》》》");
 		/*if(!StringUtils.hasLength(code)) {
@@ -70,8 +69,29 @@ public class ThreedGroupLoginController {
 			//return new ResponsePlafe(004,"","调用qq获取token异常");
 			return "redirect:https://www.yistar.top";
 		}*/
+		//access_token=FE04************************CCE2&expires_in=7776000&refresh_token=88E4************************BE14 
+		//登录态token
+		String access_token = request.getParameter("access_token");
 		
-		return "redirect:https://www.yistar.top";
+		String refresh_token = request.getParameter("refresh_token");
+		LOG.info("-----------"+access_token+"===="+refresh_token);
+		
+		//request.setAttribute("access_token", access_token);
+		HttpSession session = request.getSession();
+		request.setAttribute("session", session);
+		Cookie cookie = new Cookie("access_token", access_token);
+		cookie.setDomain("www.yistar.top");
+		cookie.setPath("/");
+		response.addCookie(cookie);
+		try {
+			response.addHeader("access_token", access_token);
+			response.addHeader("Cookie", access_token);
+			response.sendRedirect("https://www.yistar.top");
+		} catch (IOException e) {
+			LOG.info("==========>>>.重定向 失败"+e.getMessage());
+			e.printStackTrace();
+		}
+		//return "redirect:https://www.yistar.top";
 		
 		
 	}
