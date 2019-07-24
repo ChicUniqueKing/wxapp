@@ -17,8 +17,8 @@ import top.yistar.wx.wxapp.entity.ResponsePlafe;
 import top.yistar.wx.wxapp.mini.pay.config.IpAddressGet;
 import top.yistar.wx.wxapp.mini.pay.config.MyWxConfig;
 
-@RestController
-public class WxMiniUserInfoController {
+//@RestController
+public class WxMiniPayController {
 
 	@PostMapping(value = "saveUserInfo")
 	public ResponsePlafe updateUserInfo() {
@@ -85,9 +85,6 @@ public class WxMiniUserInfoController {
 				//nonceStr
 				//package   统一下单接口返回的 prepay_id 参数
 				//signType
-				
-				
-		
 		return null;
 	}
 
