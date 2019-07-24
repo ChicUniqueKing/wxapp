@@ -35,7 +35,7 @@ public class ThreedGroupLoginController {
 	//https://www.yistar.top/callback?code=8D234BE8D947163E1CE0F772249E4BDE
 	
 	@RequestMapping(value="/")
-	public void loginForQQCallBack(HttpServletRequest request,HttpServletResponse response) {
+	public String loginForQQCallBack(HttpServletRequest request,HttpServletResponse response) {
 		String code = request.getParameter("code");
 		LOG.info("--=================>>qq登录回调------》》》");
 		/*if(!StringUtils.hasLength(code)) {
@@ -86,12 +86,12 @@ public class ThreedGroupLoginController {
 		try {
 			response.addHeader("access_token", access_token);
 			/*response.addHeader("Cookie", access_token);*/
-			response.sendRedirect("https://www.yistar.top");
-		} catch (IOException e) {
+			//response.sendRedirect("https://www.yistar.top");
+		} catch (Exception e) {
 			LOG.info("==========>>>.重定向 失败"+e.getMessage());
 			e.printStackTrace();
 		}
-		//return "redirect:https://www.yistar.top";
+		return "redirect:https://www.yistar.top";
 		
 		
 	}
