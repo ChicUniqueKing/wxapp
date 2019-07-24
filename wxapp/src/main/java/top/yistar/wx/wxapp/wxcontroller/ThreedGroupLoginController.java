@@ -85,7 +85,7 @@ public class ThreedGroupLoginController {
 		response.addCookie(cookie);
 		try {
 			response.addHeader("access_token", access_token);
-			response.addHeader("Cookie", access_token);
+			/*response.addHeader("Cookie", access_token);*/
 			response.sendRedirect("https://www.yistar.top");
 		} catch (IOException e) {
 			LOG.info("==========>>>.重定向 失败"+e.getMessage());
