@@ -233,6 +233,36 @@ public class WxController {
 		return new ResponsePlafe(002,"调用天气接口异常",null);
 
 	}
+
+	/**
+	  *@Author  ChicUniqueKing
+	  *@Description  ip定位
+	  *@Date 15:18 2019/7/31
+	  *@Param [request]
+	  *@Return top.yistar.wx.wxapp.entity.ResponsePlafe
+	  **/
+	@RequestMapping(value="/location")
+	public ResponsePlafe getLocationForIp(HttpServletRequest request){
+		try {
+			//获取ip
+			String userIP = request.getRemoteAddr();
+			String xforIP = request.getHeader("X-Forwarded-For");
+			LOG.info("xforIP："+xforIP);
+			LOG.info("客户端ip："+userIP);
+			String key = "8e21fc98a34fd2fc539c3cdc082eb8a1";
+			String url = "https://restapi.amap.com/v3/ip?parameters";
+			Map<String,Object> reqData = new HashMap<>();
+			reqData.put("key",key);
+			reqData.put("ip",userIP);
+			reqData.put("output","JSON");
+			String rs = HttpUtil.inVokeRemote(url,reqData,"GET");
+			return new ResponsePlafe(001,"获取位置成功",rs);
+		}catch(Exception e){
+			LOG.info("-----------"+e.getMessage());
+		}
+		return new ResponsePlafe(002,"调用天气接口异常",null);
+
+	}
 	
 
 }
