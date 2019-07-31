@@ -14,6 +14,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import top.yistar.wx.wxapp.entity.ReceiveXmlModel;
+import top.yistar.wx.wxapp.entity.ResponsePlafe;
 import top.yistar.wx.wxapp.msg.handler.MessageHandlerManager;
+import top.yistar.wx.wxapp.util.HttpUtil;
 import top.yistar.wx.wxapp.util.ReceiveXmlProcess;
 import top.yistar.wx.wxapp.util.SHA1;
 
@@ -105,9 +108,9 @@ public class WxController {
 	
 	//测试手机号归属地api测试
 	@RequestMapping(value="/test")
-	public Map<String, String> indexTest(String name){
+	public Map<String, String> indexTest(HttpServletRequest request){
 		Map<String, String> map = new HashMap<>();
-		//String name = request.getParameter("name");
+		String name = request.getParameter("name");
 		System.out.println("===================>>>>>"+name);
 		map.put("name", name);
 		//String phoneUrl = "http://www.yistar.top/test";
@@ -191,7 +194,6 @@ public class WxController {
 			e.printStackTrace();
 		}finally {
 			//关闭资源
-			
 				try {
 					if(reader2!=null)reader2.close();
 					if(reader!=null)reader.close();
@@ -202,6 +204,32 @@ public class WxController {
 				}		
 		}
 		return null;
+	}
+
+	/**
+	  *@Author  ChicUniqueKing
+	  *@Description  天气查询接口
+	  *@Date 14:16 2019/7/31
+	  *@Param
+	  *@Return
+	  **/
+	@RequestMapping(value="/wether")
+	public ResponsePlafe getwether(){
+		try {
+			String key = "5e00f78a6de2cd2a687c0e9b753e2318";
+			String url ="https://restapi.amap.com/v3/weather/weatherInfo?parameters";
+			Map<String,Object> reqData = new HashMap<>();
+			reqData.put("key",key);
+			reqData.put("city","430300");
+			reqData.put("extensions","all");
+			reqData.put("output","JSON");
+			String rs = HttpUtil.inVokeRemote(url,reqData,"GET");
+			return new ResponsePlafe(001,"获取天气成功",rs);
+		}catch(Exception e){
+			LOG.info("-----------"+e.getMessage());
+		}
+		return new ResponsePlafe(002,"调用天气接口异常",null);
+
 	}
 	
 

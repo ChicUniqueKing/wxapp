@@ -3,44 +3,59 @@ package top.yistar.wx.wxapp.util;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.nullValue;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.attribute.FileOwnerAttributeView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.DefaultBHttpClientConnection;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.omg.CORBA.OBJ_ADAPTER;
 import org.slf4j.Logger;
 
 import com.alibaba.fastjson.JSON;
+import top.yistar.wx.wxapp.exception.RquesetMethodException;
 
 public class HttpUtil {
+
+
+	/**
+	 * 请求方式
+	 *
+	  **/
+	public static final  String GET ="GET";
+
+	public static final  String POST ="POST";
+
+
+
 
 	private static CloseableHttpClient httpClient;
 	static {
@@ -149,9 +164,10 @@ public class HttpUtil {
 
 			return buffer.toString();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		} finally {
+
 			try {
 				if (reader != null)
 					reader.close();
@@ -159,9 +175,8 @@ public class HttpUtil {
 					inputStreamReader.close();
 				if (reader != null)
 					reader.close();
-				// if(connection!=null)connection.disconnect();
+				if(connection!=null)connection.disconnect();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -193,7 +208,10 @@ public class HttpUtil {
 	}
 
 	public static void main(String[] args) {
-		Map<String, String> map = new HashMap<>();
+
+		String key = "5e00f78a6de2cd2a687c0e9b753e2318";
+
+		Map<String, Object> map = new HashMap<>();
 		map.put("name", "15850781443");
 		/*String json = JSON.toJSONString(map);
 		System.out.println("=============??data"+json);
@@ -202,7 +220,22 @@ public class HttpUtil {
 	    /*String rs = post("http://localhost:8888/test",json);
 	    System.out.println(rs);*/
 		// getInvoke("http://localhost:8888/test",map);
-		String rs = post("http://localhost:9990/test", JSON.toJSONString(map));
+		//String rs = post("http://www.yistar.top/wx_mini/test", JSON.toJSONString(map));
+		//String url = "http://localhost:8888/test";
+//		map.put("version","v1");
+//		map.put("cityid","101120201");
+//		map.put("city","青岛");
+//		map.put("ip","27.193.132.255");
+//		map.put("callback","dd");
+		//String url ="https://www.tianqiapi.com/api/";
+		map.put("key",key);
+		map.put("city","430300");
+		map.put("extensions","all");
+		map.put("output","JSON");
+		String url ="https://restapi.amap.com/v3/weather/weatherInfo?parameters";
+		//String url ="http://localhost:8888/test";
+		//String url = "https://www.yistar.top/wx_mini/test";
+		String rs =inVokeRemote(url,map,"GET");
 		System.out.println(rs);
 	}
 
@@ -244,4 +277,100 @@ public class HttpUtil {
 		return result;
 	}
 
+
+
+	// Http工具远程接口调用工具   上面的工具都有问题 这个已经经过测试
+	public static  String inVokeRemote(String url,Map<String,Object> map,String requestType){
+
+		InputStream in =null;
+		InputStreamReader  reader  = null;
+		BufferedReader bufferedReader = null;
+		try {
+			List<NameValuePair> pairs = new ArrayList<>();
+			for(String key : map.keySet()){
+				NameValuePair pair = new NameValuePair() {
+					@Override
+					public String getName() {
+						return key;
+					}
+					@Override
+					public String getValue() {
+						return map.get(key).toString();
+					}
+				};
+				pairs.add(pair);
+			}
+
+			HttpEntity entity = getEntity(url,pairs,requestType);
+			in = getInpputStream(entity);
+			if(in!=null){
+				reader = new InputStreamReader(in);
+				bufferedReader = new BufferedReader(reader);
+			}
+			String line = "";
+			StringBuffer buffer = new StringBuffer();
+			while((line =bufferedReader.readLine())!=null){
+				buffer.append(line);
+			}
+			return buffer.toString();
+		} catch (RquesetMethodException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally {
+		try {
+			if(bufferedReader!=null)bufferedReader.close();
+			if(reader!=null)reader.close();
+			if(in!=null)in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	/**
+	  *@Author  ChicUniqueKing
+	  *@Description
+	  *@Date 9:58 2019/7/31
+	  *@Param [url, pairs, requestType]
+	  *@Return org.apache.http.HttpEntity
+	  **/
+	public static HttpEntity getEntity(String url,List<NameValuePair> pairs,String requestType) throws RquesetMethodException, IOException {
+		HttpEntity entity = null;
+		HttpClient client = new DefaultHttpClient();
+		HttpRequest request =null;
+		if(requestType.equals(GET)){
+			StringBuilder builder = new StringBuilder(url);
+			builder.append("?");
+			for(NameValuePair NameValuePair:pairs){
+				builder.append(NameValuePair.getName()).append("=").append(NameValuePair.getValue()).append("&");
+			}
+			//删除builder 的最后一个字符
+			builder.deleteCharAt(builder.length()-1);
+			request = new HttpGet(builder.toString());
+		}else if(requestType.equals(POST)){
+			request = new HttpPost(url);
+			UrlEncodedFormEntity reEntity = new UrlEncodedFormEntity(pairs,"utf-8");
+			((HttpPost) request).setEntity(reEntity);
+		}else{
+			throw new RquesetMethodException("reqquest 方式错误");
+		}
+		HttpResponse response = client.execute((HttpUriRequest) request);
+		if(response.getStatusLine().getStatusCode()==200){
+			entity = response.getEntity();
+		}
+		return entity;
+	}
+
+		public static InputStream getInpputStream(HttpEntity entity) throws IOException {
+			return entity!=null? entity.getContent():null;
+		}
+
+
+
+
+
 }
+
+
