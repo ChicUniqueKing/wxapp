@@ -214,14 +214,16 @@ public class WxController {
 	  *@Return
 	  **/
 	@RequestMapping(value="/wether")
-	public ResponsePlafe getwether(){
+	public ResponsePlafe getwether(HttpServletRequest request){
+	    String cityCode  = request.getParameter("cityCode");
+        String extensions  = request.getParameter("extensions");
 		try {
 			String key = "5e00f78a6de2cd2a687c0e9b753e2318";
 			String url ="https://restapi.amap.com/v3/weather/weatherInfo?parameters";
 			Map<String,Object> reqData = new HashMap<>();
 			reqData.put("key",key);
-			reqData.put("city","430300");
-			reqData.put("extensions","all");
+			reqData.put("city",cityCode);
+			reqData.put("extensions",extensions);
 			reqData.put("output","JSON");
 			String rs = HttpUtil.inVokeRemote(url,reqData,"GET");
 			return new ResponsePlafe(001,"获取天气成功",rs);
