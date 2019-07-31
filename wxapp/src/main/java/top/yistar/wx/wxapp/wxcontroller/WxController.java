@@ -14,6 +14,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -245,9 +246,9 @@ public class WxController {
 	public ResponsePlafe getLocationForIp(HttpServletRequest request){
 		try {
 			//获取ip
-			String userIP = request.getRemoteAddr();
-			String xforIP = request.getHeader("X-Forwarded-For");
-			LOG.info("xforIP："+xforIP);
+			String userIP = getIp2(request);
+			//String xforIP = request.getHeader("X-Forwarded-For");
+			//String realIp = request.getHeader("X-Real-IP");
 			LOG.info("客户端ip："+userIP);
 			String key = "8e21fc98a34fd2fc539c3cdc082eb8a1";
 			String url = "https://restapi.amap.com/v3/ip?parameters";
@@ -263,6 +264,26 @@ public class WxController {
 		return new ResponsePlafe(002,"调用天气接口异常",null);
 
 	}
+
+	//获取用户ip
+	public static String getIp2(HttpServletRequest request) {
+		           String ip = request.getHeader("X-Forwarded-For");
+		          if(StringUtils.isNotEmpty(ip) && !"unKnown".equalsIgnoreCase(ip)){
+			                //多次反向代理后会有多个ip值，第一个ip才是真实ip
+			                int index = ip.indexOf(",");
+		              if(index != -1){
+				                   return ip.substring(0,index);
+				              }else{
+				                   return ip;
+				                }
+			            }
+		           ip = request.getHeader("X-Real-IP");
+		           if(StringUtils.isNotEmpty(ip) && !"unKnown".equalsIgnoreCase(ip)){
+			               return ip;
+			           }
+		           return request.getRemoteAddr();
+		       }
+
 	
 
 }
