@@ -1,7 +1,5 @@
 package top.yistar.wx.wxapp.entity;
 
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-
 /**
  * 
  * @author ChicUniqueKing

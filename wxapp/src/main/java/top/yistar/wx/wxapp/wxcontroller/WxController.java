@@ -5,27 +5,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import top.yistar.wx.wxapp.entity.ReceiveXmlModel;
 import top.yistar.wx.wxapp.entity.ResponsePlafe;
+import top.yistar.wx.wxapp.entity.User;
 import top.yistar.wx.wxapp.msg.handler.MessageHandlerManager;
 import top.yistar.wx.wxapp.util.HttpUtil;
 import top.yistar.wx.wxapp.util.ReceiveXmlProcess;
@@ -264,7 +259,6 @@ public class WxController {
 		return new ResponsePlafe(002,"调用天气接口异常",null);
 
 	}
-
 	//获取用户ip
 	public static String getIp2(HttpServletRequest request) {
 		           String ip = request.getHeader("X-Forwarded-For");
@@ -283,6 +277,18 @@ public class WxController {
 			           }
 		           return request.getRemoteAddr();
 		       }
+
+	@RequestMapping("/tochat")
+	@ResponseBody
+	public User index1(String username, HttpSession session) {
+		User user = new User();
+		user.setId(new Random().nextInt(10)*10000);
+		user.setName(username);
+		System.out.println(user);
+		session.setAttribute("user",user);
+		return user;
+	}
+
 
 	
 
