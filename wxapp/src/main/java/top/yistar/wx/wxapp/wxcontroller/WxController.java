@@ -279,7 +279,6 @@ public class WxController {
 		       }
 
 	@RequestMapping("/tochat")
-	@ResponseBody
 	public User index1(String username, HttpSession session) {
 		User user = new User();
 		user.setId(new Random().nextInt(10)*10000);
