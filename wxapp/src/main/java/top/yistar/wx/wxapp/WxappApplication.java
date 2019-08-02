@@ -18,9 +18,9 @@ public class WxappApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(WxappApplication.class, args);
 	}
+
 	@PostConstruct
 	public void serverInit() {
-		
 		LOG.info("------------------------------服务器启动  测试 jenkins自动部署功能-----------");
 	}
 

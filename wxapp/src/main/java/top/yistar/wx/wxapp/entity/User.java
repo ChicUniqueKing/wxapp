@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 public class User implements Serializable{
 
-	private  int id ;
+	private  String id ;
 
 	private String name ;
 	
@@ -27,7 +27,7 @@ public class User implements Serializable{
 	public User() {
 	}
 
-	public User(int id, String name, String username, String password, String phone, String nickname) {
+	public User(String id, String name, String username, String password, String phone, String nickname) {
 		this.id = id;
 		this.name = name;
 		this.username = username;
@@ -36,7 +36,7 @@ public class User implements Serializable{
 		this.nickname = nickname;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -60,7 +60,7 @@ public class User implements Serializable{
 		return nickname;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

@@ -25,6 +25,7 @@ import top.yistar.wx.wxapp.msg.handler.MessageHandlerManager;
 import top.yistar.wx.wxapp.util.HttpUtil;
 import top.yistar.wx.wxapp.util.ReceiveXmlProcess;
 import top.yistar.wx.wxapp.util.SHA1;
+import top.yistar.wx.wxapp.websocket.UserSessionManager;
 
 
 /**
@@ -279,13 +280,31 @@ public class WxController {
 		       }
 
 	@RequestMapping("/tochat")
-	public User index1(String username, HttpSession session) {
+	public User index1(String username, HttpServletRequest request) {
+		LOG.info("------------------用户的登录--------");
 		User user = new User();
-		user.setId(new Random().nextInt(10)*10000);
+
+
+		//
+		String userId = UUID.randomUUID().toString().replaceAll("-","");
+		user.setId(userId);
 		user.setName(username);
 		System.out.println(user);
+		HttpSession session = request.getSession();
+		LOG.info("-----------登陆的session"+session);
 		session.setAttribute("user",user);
+		UserSessionManager.setSessionUser("userSessions",session);
+		HttpSession session1 = UserSessionManager.getSessionUser("userSessions");
+		LOG.info("-----------保存在UserSessionManager中的:"+session);
 		return user;
+	}
+
+
+	@RequestMapping(value="/register")
+	public ResponsePlafe index1(@RequestBody  User user, HttpServletRequest request) {
+		//分配一个用户id
+		//String userId =
+			return new ResponsePlafe(0001,"",null);
 	}
 
 
