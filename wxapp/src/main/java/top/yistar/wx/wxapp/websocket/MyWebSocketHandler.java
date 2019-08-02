@@ -68,7 +68,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
 	@Override
 	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-    	LOG.info("---------------------handleTransportError----- ------------");
+    	LOG.info("---------------------handleTransportError----- ------------"+exception.getMessage());
 		//session.close();
 		/*for(Integer key : userSocketSessionMap.keySet()){
 			if(){
