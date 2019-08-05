@@ -325,9 +325,11 @@ public class WxController {
 			Map<String, Object> reqData = new HashMap<>();
 			//获取qq登录的access_token
 			String access_token = request.getParameter("access_token");
+			LOG.info("-----------access_token="+access_token);
 			reqData.put("access_token", access_token);
 			String rs = HttpUtil.inVokeRemote(openId_url, reqData, "GET");
-			String rs_n = rs.substring(rs.indexOf("("), rs.lastIndexOf(")"));
+			String rs_n = rs.substring(rs.indexOf("(")+1, rs.lastIndexOf(")"));
+			LOG.info("-----------------="+rs_n);
 			String openId = "";
 			if (rs != null) {
 				JSONObject jsonObject = JSON.parseObject(rs_n);
