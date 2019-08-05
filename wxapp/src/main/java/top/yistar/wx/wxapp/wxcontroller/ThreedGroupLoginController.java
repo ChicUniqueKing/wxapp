@@ -77,7 +77,7 @@ public class ThreedGroupLoginController {
 		String  userId = UUID.randomUUID().toString().replaceAll("-","");
 
 		String access_token = request.getParameter("access_token");
-		UserInfoManager.userInfoMap.put("userId",access_token);
+		////UserInfoManager.userInfoMap.put("userId",access_token);
 		String refresh_token = request.getParameter("refresh_token");
 		LOG.info("-----------"+access_token+"===="+refresh_token);
 		
