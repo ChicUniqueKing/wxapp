@@ -6,11 +6,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
@@ -25,6 +28,7 @@ import top.yistar.wx.wxapp.msg.handler.MessageHandlerManager;
 import top.yistar.wx.wxapp.util.HttpUtil;
 import top.yistar.wx.wxapp.util.ReceiveXmlProcess;
 import top.yistar.wx.wxapp.util.SHA1;
+import top.yistar.wx.wxapp.util.UserInfoManager;
 import top.yistar.wx.wxapp.websocket.UserSessionManager;
 
 
@@ -305,6 +309,86 @@ public class WxController {
 		//分配一个用户id
 		//String userId =
 			return new ResponsePlafe(0001,"",null);
+	}
+	//:https://graph.qq.com/oauth2.0/me?access_token=57959F319C907272DC1B22E2E9C77963
+
+
+
+	//https://graph.qq.com/user/get_user_info?access_token=57959F319C907272DC1B22E2E9C77963&oauth_consumer_key=101684736&openid=D1640F154C32F1E4676A5BB0EBAA9868
+	@RequestMapping(value="/getUserInfo")
+	public ResponsePlafe getUserInfo(HttpServletRequest request){
+		//验证token 有效性  有可能该token 已经过期 那么需要用户重新登录
+		//TODO
+		//access_token=57959F319C907272DC1B22E2E9C77963
+		try {
+			String openId_url = "https://graph.qq.com/oauth2.0/me";
+			Map<String, Object> reqData = new HashMap<>();
+			//获取qq登录的access_token
+			String access_token = request.getParameter("access_token");
+			reqData.put("access_token", access_token);
+			String rs = HttpUtil.inVokeRemote(openId_url, reqData, "GET");
+			String rs_n = rs.substring(rs.indexOf("("), rs.lastIndexOf(")"));
+			String openId = "";
+			if (rs != null) {
+				JSONObject jsonObject = JSON.parseObject(rs_n);
+				openId = jsonObject.getString("openid");
+				if (openId == null) {
+					return new ResponsePlafe(0002, "获取openid失败", null);
+				}
+			}
+			//access_token=57959F319C907272DC1B22E2E9C77963&oauth_consumer_key=101684736&openid=D1640F154C32F1E4676A5BB0EBAA9868
+			String userinfo_url = "https://graph.qq.com/user/get_user_info";
+			Map<String, Object> userinfo_Data = new HashMap<>();
+			userinfo_Data.put("access_token", access_token);
+			userinfo_Data.put("oauth_consumer_key", "101684736");
+			userinfo_Data.put("openid", openId);
+			String userInfoRs = HttpUtil.inVokeRemote(userinfo_url, userinfo_Data, "GET");
+//		{
+//			"ret": 0,
+//				"msg": "",
+//				"is_lost": 0,
+//				"nickname": "NoGrilFriendException",
+//				"gender": "男",
+//				"province": "广东",
+//				"city": "深圳",
+//				"year": "1991",
+//				"constellation": "",
+//				"figureurl": "http:\/\/qzapp.qlogo.cn\/qzapp\/101684736\/D1640F154C32F1E4676A5BB0EBAA9868\/30",
+//				"figureurl_1": "http:\/\/qzapp.qlogo.cn\/qzapp\/101684736\/D1640F154C32F1E4676A5BB0EBAA9868\/50",
+//				"figureurl_2": "http:\/\/qzapp.qlogo.cn\/qzapp\/101684736\/D1640F154C32F1E4676A5BB0EBAA9868\/100",
+//				"figureurl_qq_1": "http://thirdqq.qlogo.cn/g?b=oidb&k=Z9rxm8oUoa4vQybVd0ysww&s=40&t=1502759387",
+//				"figureurl_qq_2": "http://thirdqq.qlogo.cn/g?b=oidb&k=Z9rxm8oUoa4vQybVd0ysww&s=100&t=1502759387",
+//				"figureurl_qq": "http://thirdqq.qlogo.cn/g?b=oidb&k=Z9rxm8oUoa4vQybVd0ysww&s=140&t=1502759387",
+//				"figureurl_type": "1",
+//				"is_yellow_vip": "0",
+//				"vip": "0",
+//				"yellow_vip_level": "0",
+//				"level": "0",
+//				"is_yellow_year_vip": "0"
+//		}
+			//解析数据
+			if (userInfoRs != null) {
+				JSONObject jsonObject = JSON.parseObject(userInfoRs);
+				String nickName = jsonObject.getString("nickname");
+				if (nickName != null) {
+					User user = new User();
+					user.setNickname(nickName);
+					return new ResponsePlafe(0001, "获取用户信息成功", user);
+				}
+			}
+		}catch (Exception e){
+			LOG.info("接口调用失败 请重试");
+			return new ResponsePlafe(0002,"调用qqAPI失败",null);
+		}
+		return null;
+	}
+
+
+	@RequestMapping(value="/ceshi")
+	public String ceshi(HttpServletRequest request){
+		LOG.info("-----------------接口访问----------------");
+		String userId = request.getParameter("userId");
+		return "success";
 	}
 
 
