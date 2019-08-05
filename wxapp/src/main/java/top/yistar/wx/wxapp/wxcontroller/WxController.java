@@ -298,7 +298,7 @@ public class WxController {
 		LOG.info("-----------登陆的session"+session);
 		session.setAttribute("user",user);
 		UserSessionManager.setSessionUser("userSessions",session);
-		HttpSession session1 = UserSessionManager.getSessionUser("userSessions");
+		HttpSession session1 = UserSessionManager.getSessionUser("userSessions"+userId);
 		LOG.info("-----------保存在UserSessionManager中的:"+session);
 		return user;
 	}

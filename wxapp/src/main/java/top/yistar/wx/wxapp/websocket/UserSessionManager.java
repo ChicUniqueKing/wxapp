@@ -5,6 +5,7 @@ import top.yistar.wx.wxapp.entity.User;
 import javax.servlet.http.HttpSession;
 import javax.websocket.Session;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,7 +21,7 @@ public class UserSessionManager {
     /**
        线程绑定的map
       **/
-    private static final Map<String,HttpSession> sessionMap = new ConcurrentHashMap<>();
+    private static final Map<String,HttpSession> sessionMap = new LinkedHashMap<>();
 
 
     //获取session

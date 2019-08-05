@@ -3,6 +3,7 @@ package top.yistar.wx.wxapp.wxcontroller;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import top.yistar.wx.wxapp.util.HttpUtil;
+import top.yistar.wx.wxapp.util.UserInfoManager;
 
 /**
  * 
@@ -71,8 +73,11 @@ public class ThreedGroupLoginController {
 		}*/
 		//access_token=FE04************************CCE2&expires_in=7776000&refresh_token=88E4************************BE14 
 		//登录态token
+		//
+		String  userId = UUID.randomUUID().toString().replaceAll("-","");
+
 		String access_token = request.getParameter("access_token");
-		
+		UserInfoManager.userInfoMap.put("userId",access_token);
 		String refresh_token = request.getParameter("refresh_token");
 		LOG.info("-----------"+access_token+"===="+refresh_token);
 		
@@ -85,6 +90,8 @@ public class ThreedGroupLoginController {
 		response.addCookie(cookie);
 		try {
 			response.addHeader("access_token", access_token);
+			//保存用户登录态
+
 			/*response.addHeader("Cookie", access_token);*/
 			//response.sendRedirect("https://www.yistar.top");
 		} catch (Exception e) {

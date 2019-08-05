@@ -15,8 +15,13 @@ import top.yistar.wx.wxapp.entity.User;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
-
-
+/**
+  *@Author  ChicUniqueKing
+  *@Description  websocket 拦截器
+  *@Date 16:33 2019/8/2
+  *@Param
+  *@Return
+  **/
 public class MyHandShakeInterceptor implements HandshakeInterceptor {
 
 	public static final Logger LOG = LoggerFactory.getLogger(MyHandShakeInterceptor.class);
@@ -24,17 +29,19 @@ public class MyHandShakeInterceptor implements HandshakeInterceptor {
 	@Override
 	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 			Map<String, Object> map) throws Exception {
-		LOG.info("----------拦截请求---------");
 		 if (request instanceof ServletServerHttpRequest) {
 	            ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
-			HttpSession session = UserSessionManager.getSessionUser("userSessions");
+	            String userId = servletRequest.getServletRequest().getParameter("userId");
+						LOG.info("----------拦截请求-用户id--------"+userId);
+			HttpSession session = UserSessionManager.getSessionUser("userSessions"+userId);
 	            if(session==null){
 	            	LOG.info("session 为null");
-	            	return false;
+            	return false;
 				}
 	            // 标记用户
 	            User user = (User) session.getAttribute("user");
-			 UserSessionManager.clearSession("userSessions");
+			 UserSessionManager.clearSession("userSessions"+userId);
+			 LOG.info("------------------------"+UserSessionManager.getSessionUser("userSessions"));
 	            if(user!=null){
 	                map.put("uid", user.getId());//为服务器创建WebSocketSession做准备
 					Message msg = new Message();
@@ -42,7 +49,7 @@ public class MyHandShakeInterceptor implements HandshakeInterceptor {
 					msg.setUserName(user.getUsername());
 					msg.setMessageText(user.getName()+"进来了");
 					TextMessage serverReturn = new TextMessage(new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create().toJson(msg));
-					MyWebSocketHandler.sendMsgToEveryOne("0000",serverReturn);
+					MyWebSocketHandler.sendMsgToEveryOne(WebsocketConstant.SYSTEM_ID,serverReturn);
 	                System.out.println("用户id："+user.getId()+" 被加入");
 	            }else{
 	                System.out.println("user为空");

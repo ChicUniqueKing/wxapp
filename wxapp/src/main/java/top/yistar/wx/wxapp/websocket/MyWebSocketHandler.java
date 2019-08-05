@@ -20,7 +20,8 @@ import java.util.Map;
 public class MyWebSocketHandler implements WebSocketHandler {
 
 	public static final Logger LOG = LoggerFactory.getLogger(MyWebSocketHandler.class);
-    
+
+
 	
 	 //当MyWebSocketHandler类被加载时就会创建该Map，随类而生
     public static final Map<String, WebSocketSession> userSocketSessionMap;
@@ -36,6 +37,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
     	LOG.info("建立连接");
 		// TODO Auto-generated method stub
 		String uid = webSocketSession.getAttributes().get("uid").toString();
+		LOG.info("websocket id=",uid);
         if (userSocketSessionMap.get(uid) == null) {
             userSocketSessionMap.put(uid, webSocketSession);
         }
@@ -56,11 +58,26 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	        //将信息保存至数据库
 	       // youandmeService.addMessage(msg.getFromId(),msg.getFromName(),msg.getToId(),msg.getMessageText(),msg.getMessageDate());
 	        //发送Socket信息
+
+		  //判断消息类型
+		String msgType = msg.getMsgType();
 		TextMessage  serverReturn = new TextMessage(new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create().toJson(msg));
-		if(msg.getToId()==null){//目标对象为null 则为群聊
+
+		if(msgType.equals("0001")){//用户退出消息
+
+		}else if(msgType.equals("0002")){//用户进入
+
+		}else if(msgType.equals("0003")){//用户列表
+
+		}else if(msgType.equals("0004")){//普通文本消息
+			if(msg.getToId()==null){//目标对象为null 则为群聊
 				sendMsgToEveryOne(msg.getFromId(),serverReturn);
-		}else{
-			//发送给指定用户
+			}else{
+				//发送给指定用户
+				sendMessageToUser(msg.getFromId(), serverReturn);
+			}
+
+		}else{//心跳续命
 			sendMessageToUser(msg.getFromId(), serverReturn);
 		}
 
@@ -89,6 +106,11 @@ public class MyWebSocketHandler implements WebSocketHandler {
                 System.out.println("WebSocket in staticMap:" + webSocketSession.getAttributes().get("uid") + "removed");
             }
         }
+		Message msg = new Message();
+        msg.setMsgType("systemMsg");
+		msg.setMessageText("离开聊天室");
+		TextMessage  serverReturn = new TextMessage(new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create().toJson(msg));
+		sendMsgToEveryOne(WebsocketConstant.SYSTEM_ID,serverReturn);
 	}
 
 	@Override
@@ -113,9 +135,11 @@ public class MyWebSocketHandler implements WebSocketHandler {
 			throws IOException {
     	for(String key: userSocketSessionMap.keySet()){
     		//自己发群聊消息 自己不用接受给自己返回
-    		if(key.equals(userSendId)){
-    			continue;
-			}
+//    		if(key.equals(userSendId)){
+//				WebSocketSession session1 = userSocketSessionMap.get(key);
+//				session1.sendMessage(message);
+//				continue;
+//			}
 			WebSocketSession session = userSocketSessionMap.get(key);
 			if (session != null && session.isOpen()) {
 				session.sendMessage(message);
