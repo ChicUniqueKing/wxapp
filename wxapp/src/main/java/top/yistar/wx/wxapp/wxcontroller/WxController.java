@@ -372,7 +372,7 @@ public class WxController {
 			if (userInfoRs != null) {
 				JSONObject jsonObject = JSON.parseObject(userInfoRs);
 				String nickName = jsonObject.getString("nickname");
-				String img_url = jsonObject.getString("figureurl_qq_1");
+				String img_url = jsonObject.getString("figureurl_qq_1").replace("http","https");
 				if (nickName != null) {
 					User user = new User();
 					user.setNickname(nickName);
@@ -393,6 +393,16 @@ public class WxController {
 		LOG.info("-----------------接口访问----------------");
 		String userId = request.getParameter("userId");
 		return "success";
+	}
+
+
+
+
+
+	 public static void main(String args []){
+	    String s = "23198hfuabefiugw8egr32ub";
+	   String s2 = s.replace("8e","ccc");
+	    System.out.println("---"+s2);
 	}
 
 
