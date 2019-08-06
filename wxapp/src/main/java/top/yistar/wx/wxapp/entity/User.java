@@ -1,5 +1,6 @@
 package top.yistar.wx.wxapp.entity;
 
+import jdk.nashorn.internal.objects.annotations.Getter;
 import jdk.nashorn.internal.objects.annotations.Setter;
 
 import java.io.Serializable;
@@ -24,16 +25,19 @@ public class User implements Serializable{
 	
 	private String nickname;
 
+	private String img_url;
+
 	public User() {
 	}
 
-	public User(String id, String name, String username, String password, String phone, String nickname) {
+	public User(String id, String name, String username, String password, String phone, String nickname, String img_url) {
 		this.id = id;
 		this.name = name;
 		this.username = username;
 		this.password = password;
 		this.phone = phone;
 		this.nickname = nickname;
+		this.img_url = img_url;
 	}
 
 	public String getId() {
@@ -60,6 +64,10 @@ public class User implements Serializable{
 		return nickname;
 	}
 
+	public String getImg_url() {
+		return img_url;
+	}
+
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -82,5 +90,22 @@ public class User implements Serializable{
 
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
+	}
+
+	public void setImg_url(String img_url) {
+		this.img_url = img_url;
+	}
+
+	@Override
+	public String toString() {
+		return "User{" +
+				"id='" + id + '\'' +
+				", name='" + name + '\'' +
+				", username='" + username + '\'' +
+				", password='" + password + '\'' +
+				", phone='" + phone + '\'' +
+				", nickname='" + nickname + '\'' +
+				", img_url='" + img_url + '\'' +
+				'}';
 	}
 }

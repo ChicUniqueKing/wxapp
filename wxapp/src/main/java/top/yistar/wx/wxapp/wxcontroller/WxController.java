@@ -372,9 +372,11 @@ public class WxController {
 			if (userInfoRs != null) {
 				JSONObject jsonObject = JSON.parseObject(userInfoRs);
 				String nickName = jsonObject.getString("nickname");
+				String img_url = jsonObject.getString("figureurl_qq_1");
 				if (nickName != null) {
 					User user = new User();
 					user.setNickname(nickName);
+					user.setImg_url(img_url);
 					return new ResponsePlafe(0001, "获取用户信息成功", user);
 				}
 			}
